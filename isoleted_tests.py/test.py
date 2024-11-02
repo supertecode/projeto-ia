@@ -28,12 +28,16 @@ def handle_input(pacman):
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
                 pacman.move(0, -1)  # Mover para cima
+                print("cima")
             elif event.key == pygame.K_DOWN:
                 pacman.move(0, 1)  # Mover para baixo
+                print("baixo")
             elif event.key == pygame.K_LEFT:
                 pacman.move(-1, 0)  # Mover para a esquerda
+                print("esquerda")
             elif event.key == pygame.K_RIGHT:
                 pacman.move(1, 0)  # Mover para a direita
+                print("direita")
     return True
 
 # Criação da instância do PacMan

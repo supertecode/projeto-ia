@@ -11,7 +11,10 @@ class Maze:
         # Adicione mais labirintos para níveis diferentes
 
     def is_path(self, x, y):
-        return self.grid[y][x] == 0
+      if 0 <= y < len(self.grid) and 0 <= x < len(self.grid[0]):
+        if self.grid[x-1][y-1] == 1:
+          return True
+      return False
 
     def draw(self, screen):
         for y, row in enumerate(self.grid):

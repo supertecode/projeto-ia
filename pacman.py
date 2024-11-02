@@ -2,7 +2,7 @@ import pygame
 
 class PacMan:
     def __init__(self):
-        self.x, self.y = 1, 1  # Posição inicial
+        self.x, self.y = 1, 0  # Posição inicial
         self.direction = (0, 0)
 
     def move(self, maze):
@@ -10,7 +10,7 @@ class PacMan:
         new_x = self.x + self.direction[0]
         new_y = self.y + self.direction[1]
         if maze.is_path(new_x, new_y):
-            self.x, self.y = new_x, new_y
+          self.x, self.y = new_x, new_y
 
     def draw(self, screen):
         pygame.draw.circle(screen, (255, 255, 0), (self.x * 20, self.y * 20), 10)

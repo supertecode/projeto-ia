@@ -17,13 +17,16 @@ class Game:
             self.handle_events()
             self.update()
             self.draw()
-            self.clock.tick(60)
+            self.clock.tick(5)
 
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+            elif event.type == pygame.KEYDOWN:
+                self.pacman.handle_input(event)
+               
 
     def update(self):
         self.pacman.move(self.maze)     # Move o Pac-Man baseado no input do jogador
