@@ -73,16 +73,25 @@ class PacMan:
         self.speed = PACMAN_SPEED
         self.radius = CELL_SIZE // 2 - 2
         
-    def can_move(self, dx, dy):
-        next_x = (self.x + dx * self.speed) // CELL_SIZE
-        next_y = (self.y + dy * self.speed) // CELL_SIZE
+    # def can_move(self, dx, dy):
+    #     next_x = (self.x + dx * self.speed) // CELL_SIZE
+    #     next_y = (self.y + dy * self.speed) // CELL_SIZE
         
-        # Check if the next position is within bounds
-        if next_x < 0 or next_x >= MAZE_WIDTH or next_y < 0 or next_y >= MAZE_HEIGHT:
-            return False
+    #     # Check if the next position is within bounds
+    #     if next_x < 0 or next_x >= MAZE_WIDTH or next_y < 0 or next_y >= MAZE_HEIGHT:
+    #         return False
             
-        # Check if the next position is a wall
-        return MAZE_LAYOUT[next_y][next_x] != 1
+    #     # Check if the next position is a wall
+    #     return MAZE_LAYOUT[next_y][next_x] != 1
+    
+    def can_move(self, dx, dy):
+    # Convert direction to number (0=right, 1=left, 2=up, 3=down)
+        if dx > 0: direction = 0
+        elif dx < 0: direction = 1
+        elif dy < 0: direction = 2
+        else: direction = 3
+    
+        return not check_wall_collision(self.x, self.y, direction, self.speed, CELL_SIZE)
 
     def move(self):
         keys = pygame.key.get_pressed()
@@ -182,14 +191,23 @@ class Ghost:
         self.speed = GHOST_SPEED
         self.radius = CELL_SIZE // 2 - 2
         
-    def can_move(self, dx, dy):
-        next_x = (self.x + dx * self.speed) // CELL_SIZE
-        next_y = (self.y + dy * self.speed) // CELL_SIZE
+    # def can_move(self, dx, dy):
+    #     next_x = (self.x + dx * self.speed) // CELL_SIZE
+    #     next_y = (self.y + dy * self.speed) // CELL_SIZE
         
-        if next_x < 0 or next_x >= MAZE_WIDTH or next_y < 0 or next_y >= MAZE_HEIGHT:
-            return False
+    #     if next_x < 0 or next_x >= MAZE_WIDTH or next_y < 0 or next_y >= MAZE_HEIGHT:
+    #         return False
             
-        return MAZE_LAYOUT[next_y][next_x] != 1
+    #     return MAZE_LAYOUT[next_y][next_x] != 1
+    
+    def can_move(self, dx, dy):
+    # Convert direction to number (0=right, 1=left, 2=up, 3=down)
+        if dx > 0: direction = 0
+        elif dx < 0: direction = 1
+        elif dy < 0: direction = 2
+        else: direction = 3
+    
+        return not check_wall_collision(self.x, self.y, direction, self.speed, CELL_SIZE)
 
     def move(self, pacman):
         # Simple ghost AI - try to move toward Pac-Man while respecting walls
@@ -277,9 +295,101 @@ def draw_maze():
                                   y * CELL_SIZE + CELL_SIZE//2),
                                  DOT_SIZE * 2)
 
-def check_collision(x1, y1, x2, y2, tolerance=CELL_SIZE-10):
-    distance = math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
-    return distance < tolerance
+# def check_collision(x1, y1, x2, y2, tolerance=CELL_SIZE-10):
+#     distance = math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+#     return distance < tolerance
+def check_wall_collision(x, y, direction, speed, cell_size):
+    """
+    Check if moving in the given direction would result in a wall collision.
+    Returns True if there's a collision, False otherwise.
+    
+    Args:
+        x, y: Current position in pixels
+        direction: 0=right, 1=left, 2=up, 3=down
+        speed: Movement speed in pixels
+        cell_size: Size of each maze cell in pixels
+    """
+    # Calculate the corners of the entity (Pac-Man or ghost)
+    left = x
+    right = x + cell_size - 1
+    top = y
+    bottom = y + cell_size - 1
+    
+    # Add some tolerance to make movement smoother
+    tolerance = 5
+    
+    if direction == 0:  # Right
+        # Check right side
+        next_x = right + speed
+        cell_x = next_x // cell_size
+        top_cell_y = (top + tolerance) // cell_size
+        bottom_cell_y = (bottom - tolerance) // cell_size
+        
+        for cell_y in range(top_cell_y, bottom_cell_y + 1):
+            if cell_y >= 0 and cell_y < len(MAZE_LAYOUT) and cell_x < len(MAZE_LAYOUT[0]):
+                if MAZE_LAYOUT[cell_y][cell_x] == 1:
+                    return True
+                    
+    elif direction == 1:  # Left
+        # Check left side
+        next_x = left - speed
+        cell_x = next_x // cell_size
+        top_cell_y = (top + tolerance) // cell_size
+        bottom_cell_y = (bottom - tolerance) // cell_size
+        
+        for cell_y in range(top_cell_y, bottom_cell_y + 1):
+            if cell_y >= 0 and cell_y < len(MAZE_LAYOUT) and cell_x >= 0:
+                if MAZE_LAYOUT[cell_y][cell_x] == 1:
+                    return True
+                    
+    elif direction == 2:  # Up
+        # Check top side
+        next_y = top - speed
+        cell_y = next_y // cell_size
+        left_cell_x = (left + tolerance) // cell_size
+        right_cell_x = (right - tolerance) // cell_size
+        
+        for cell_x in range(left_cell_x, right_cell_x + 1):
+            if cell_y >= 0 and cell_x >= 0 and cell_x < len(MAZE_LAYOUT[0]):
+                if MAZE_LAYOUT[cell_y][cell_x] == 1:
+                    return True
+                    
+    else:  # Down
+        # Check bottom side
+        next_y = bottom + speed
+        cell_y = next_y // cell_size
+        left_cell_x = (left + tolerance) // cell_size
+        right_cell_x = (right - tolerance) // cell_size
+        
+        for cell_x in range(left_cell_x, right_cell_x + 1):
+            if cell_y < len(MAZE_LAYOUT) and cell_x >= 0 and cell_x < len(MAZE_LAYOUT[0]):
+                if MAZE_LAYOUT[cell_y][cell_x] == 1:
+                    return True
+    
+    return False
+
+def check_entity_collision(x1, y1, x2, y2, cell_size):
+    """
+    Check for collision between two entities (Pac-Man and ghosts).
+    Returns True if there's a collision, False otherwise.
+    
+    Args:
+        x1, y1: Position of first entity in pixels
+        x2, y2: Position of second entity in pixels
+        cell_size: Size of each maze cell in pixels
+    """
+    # Use center points for more accurate collision detection
+    center1_x = x1 + cell_size // 2
+    center1_y = y1 + cell_size // 2
+    center2_x = x2 + cell_size // 2
+    center2_y = y2 + cell_size // 2
+    
+    # Calculate distance between centers
+    distance = math.sqrt((center1_x - center2_x) ** 2 + (center1_y - center2_y) ** 2)
+    
+    # Collision occurs if distance is less than 3/4 of a cell size
+    collision_threshold = cell_size * 0.75
+    return distance < collision_threshold
 
 def main():
     # Create game objects
@@ -337,9 +447,13 @@ def main():
             for ghost in ghosts:
                 ghost.move(pacman)
                 # Check collision with ghosts
-                if check_collision(pacman.x + CELL_SIZE//2, pacman.y + CELL_SIZE//2, 
-                                 ghost.x + CELL_SIZE//2, ghost.y + CELL_SIZE//2):
-                    game_over = True
+                # if check_collision(pacman.x + CELL_SIZE//2, pacman.y + CELL_SIZE//2, 
+                #                  ghost.x + CELL_SIZE//2, ghost.y + CELL_SIZE//2):
+                #     game_over = True
+                if check_entity_collision(pacman.x, pacman.y, 
+                         ghost.x, ghost.y, 
+                         CELL_SIZE):
+                         game_over = True
             
             # Check win condition
             dots_remaining = False
