@@ -72,17 +72,6 @@ class PacMan:
         self.animation_counter = 0
         self.speed = PACMAN_SPEED
         self.radius = CELL_SIZE // 2 - 2
-        
-    # def can_move(self, dx, dy):
-    #     next_x = (self.x + dx * self.speed) // CELL_SIZE
-    #     next_y = (self.y + dy * self.speed) // CELL_SIZE
-        
-    #     # Check if the next position is within bounds
-    #     if next_x < 0 or next_x >= MAZE_WIDTH or next_y < 0 or next_y >= MAZE_HEIGHT:
-    #         return False
-            
-    #     # Check if the next position is a wall
-    #     return MAZE_LAYOUT[next_y][next_x] != 1
     
     def can_move(self, dx, dy):
     # Convert direction to number (0=right, 1=left, 2=up, 3=down)
@@ -134,15 +123,17 @@ class PacMan:
         elif self.direction == 3 and self.can_move(0, 1):  # Down
             self.y += self.speed
 
-        # Handle tunnel
+        # Túnel da esquerda e direita
         if self.x < 0:
             self.x = SCREEN_WIDTH - CELL_SIZE
         elif self.x >= SCREEN_WIDTH:
             self.x = 0
 
         # Update grid position
-        self.grid_x = self.x // CELL_SIZE
-        self.grid_y = self.y // CELL_SIZE
+        center_x = self.x + CELL_SIZE//2
+        center_y = self.y + CELL_SIZE//2
+        self.grid_x = center_x // CELL_SIZE
+        self.grid_y = center_y // CELL_SIZE
             
         # Animation
         self.animation_counter += 1
