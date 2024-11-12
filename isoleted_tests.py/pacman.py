@@ -136,6 +136,8 @@ class PacMan:
         center_y = self.y + CELL_SIZE//2
         self.grid_x = center_x // CELL_SIZE
         self.grid_y = center_y // CELL_SIZE
+        
+        print('POSIÇÃO DO PACMAN: ',self.grid_x, self.grid_y)
             
         # Animation
         self.animation_counter += 1
@@ -195,18 +197,29 @@ class Ghost:
         neighbors = []
         
         for dx, dy in directions:
-            new_x, new_y = x + dx, y + dy
+            new_x = x + dx
+            new_y = y + dy
             
             # Handle tunnel wrap-around
             if new_x < 0:
                 new_x = len(maze[0]) - 1
             elif new_x >= len(maze[0]):
                 new_x = 0
-                
+
+            # print("getvalid")
+            checkCollision = check_wall_collision(self.x, self.y, self.direction, self.speed, CELL_SIZE)
             # Check if the position is valid and not a wall
-            if (new_x >= 0 and new_x < len(maze[0]) and
-                maze[new_y][new_x] != 1):  # Assuming 1 represents walls
+            if(checkCollision):
+                print('COLISAO')
+            else:
+                print('SEMCOLISAO')
                 neighbors.append((new_x, new_y))
+                
+            # if (new_x >= 0 and new_x < len(maze[0]) and
+            #     maze[new_y][new_x] != 1):  # Assuming 1 represents walls
+            #     neighbors.append((new_x, new_y))
+            #     print(neighbors)
+            #     # print('getvalid dentro')
                 
         return neighbors
 
@@ -291,6 +304,7 @@ class Ghost:
         elif self.x >= SCREEN_WIDTH:
             self.x = 0
 
+        print('POSIÇÃO DO FANTASMA: ',self.grid_x, self.grid_y)
         # Update grid position
         self.grid_x = self.x // CELL_SIZE
         self.grid_y = self.y // CELL_SIZE
@@ -305,62 +319,6 @@ class Ghost:
         pygame.draw.rect(screen, self.color, 
                         (center_x - self.radius, center_y, 
                          self.radius * 2, self.radius))
-
-        """def can_move(self, dx, dy):
-    # Convert direction to number (0=right, 1=left, 2=up, 3=down)
-        if dx > 0: direction = 0
-        elif dx < 0: direction = 1
-        elif dy < 0: direction = 2
-        else: direction = 3
-    
-        return not check_wall_collision(self.x, self.y, direction, self.speed, CELL_SIZE)
-    def move(self, pacman):
-        # Simple ghost AI - try to move toward Pac-Man while respecting walls
-        possible_directions = []
-        if self.can_move(1, 0):  # Right
-            possible_directions.append(0)
-        if self.can_move(-1, 0):  # Left
-            possible_directions.append(1)
-        if self.can_move(0, -1):  # Up
-            possible_directions.append(2)
-        if self.can_move(0, 1):  # Down
-            possible_directions.append(3)
-            
-        if possible_directions:
-            if random.random() < 0.2:  # Sometimes move randomly
-                self.direction = random.choice(possible_directions)
-            else:  # Otherwise try to move toward Pac-Man
-                distances = []
-                for d in possible_directions:
-                    if d == 0:  # Right
-                        next_x = self.x + CELL_SIZE
-                        next_y = self.y
-                    elif d == 1:  # Left
-                        next_x = self.x - CELL_SIZE
-                        next_y = self.y
-                    elif d == 2:  # Up
-                        next_x = self.x
-                        next_y = self.y - CELL_SIZE
-                    else:  # Down
-                        next_x = self.x
-                        next_y = self.y + CELL_SIZE
-                        
-                    dist = math.sqrt((next_x - pacman.x)**2 + (next_y - pacman.y)**2)
-                    distances.append(dist)
-                    
-                self.direction = possible_directions[distances.index(min(distances))]
-
-        # Move in the chosen direction
-        if self.direction == 0 and self.can_move(1, 0):  # Right
-            self.x += self.speed
-        elif self.direction == 1 and self.can_move(-1, 0):  # Left
-            self.x -= self.speed
-        elif self.direction == 2 and self.can_move(0, -1):  # Up
-            self.y -= self.speed
-        elif self.direction == 3 and self.can_move(0, 1):  # Down
-            self.y += self.speed
-            
-        """
 
 def draw_maze():
     for y in range(MAZE_HEIGHT):
@@ -484,10 +442,10 @@ def main():
     
     # Place ghosts in the center area
     ghosts = [
-        Ghost(7 * CELL_SIZE, 8 * CELL_SIZE, RED),
-        Ghost(8 * CELL_SIZE, 8 * CELL_SIZE, (255, 192, 203)),  # Pink
-        Ghost(10 * CELL_SIZE, 8 * CELL_SIZE, (0, 255, 255)),   # Cyan
-        Ghost(11 * CELL_SIZE, 8 * CELL_SIZE, (255, 165, 0))    # Orange
+        Ghost(9 * CELL_SIZE, 8 * CELL_SIZE, RED),
+        # Ghost(8 * CELL_SIZE, 8 * CELL_SIZE, (255, 192, 203)),  # Pink
+        # Ghost(10 * CELL_SIZE, 8 * CELL_SIZE, (0, 255, 255)),   # Cyan
+        # Ghost(11 * CELL_SIZE, 8 * CELL_SIZE, (255, 165, 0))    # Orange
     ]
     
     score = 0
@@ -504,12 +462,12 @@ def main():
                     # Reset game
                     pacman = PacMan(9 * CELL_SIZE, 15 * CELL_SIZE)
                     ghosts = [
-                        Ghost(7 * CELL_SIZE, 8 * CELL_SIZE, RED),
-                        Ghost(8 * CELL_SIZE, 8 * CELL_SIZE, (255, 192, 203)),
-                        Ghost(10 * CELL_SIZE, 8 * CELL_SIZE, (0, 255, 255)),
-                        Ghost(11 * CELL_SIZE, 8 * CELL_SIZE, (255, 165, 0))
+                        Ghost(9 * CELL_SIZE, 9 * CELL_SIZE, RED),
+                        # Ghost(8 * CELL_SIZE, 8 * CELL_SIZE, (255, 192, 203)),
+                        # Ghost(10 * CELL_SIZE, 8 * CELL_SIZE, (0, 255, 255)),
+                        # Ghost(11 * CELL_SIZE, 8 * CELL_SIZE, (255, 165, 0))
                     ]
-                    # Reset maze dots
+                    # Reset maze dots TODO CORRIGIR PRA RESETAR CORRETAMENTE, ELE DEIXA ATE ONDE ER AP SER ESPÇO EM BRANCO COM PONTOS
                     for y in range(MAZE_HEIGHT):
                         for x in range(MAZE_WIDTH):
                             if MAZE_LAYOUT[y][x] == 0:
