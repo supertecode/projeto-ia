@@ -1,5 +1,7 @@
 import pygame
 import random
+import heapq
+from typing import List, Tuple, Set
 import math
 
 # Initialize Pygame
@@ -171,6 +173,7 @@ class PacMan:
                  center_y - math.sin(end_angle) * self.radius)
             ])
 
+
 class Ghost:
     def __init__(self, x, y, color):
         self.x = x
@@ -181,17 +184,129 @@ class Ghost:
         self.direction = random.randint(0, 3)
         self.speed = GHOST_SPEED
         self.radius = CELL_SIZE // 2 - 2
+
+    def manhattan_distance(self, x1: int, y1: int, x2: int, y2: int) -> int:
+        """Calculate Manhattan distance between two points."""
+        return abs(x1 - x2) + abs(y1 - y2)
+
+    def get_valid_neighbors(self, x: int, y: int, maze):
+        """Get valid neighboring cells (not walls)."""
+        directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]  # up, down, left, right
+        neighbors = []
         
-    # def can_move(self, dx, dy):
-    #     next_x = (self.x + dx * self.speed) // CELL_SIZE
-    #     next_y = (self.y + dy * self.speed) // CELL_SIZE
-        
-    #     if next_x < 0 or next_x >= MAZE_WIDTH or next_y < 0 or next_y >= MAZE_HEIGHT:
-    #         return False
+        for dx, dy in directions:
+            new_x, new_y = x + dx, y + dy
             
-    #     return MAZE_LAYOUT[next_y][next_x] != 1
+            # Handle tunnel wrap-around
+            if new_x < 0:
+                new_x = len(maze[0]) - 1
+            elif new_x >= len(maze[0]):
+                new_x = 0
+                
+            # Check if the position is valid and not a wall
+            if (new_x >= 0 and new_x < len(maze[0]) and
+                maze[new_y][new_x] != 1):  # Assuming 1 represents walls
+                neighbors.append((new_x, new_y))
+                
+        return neighbors
+
+    def find_next_move(self, maze, pacman_x: int, pacman_y: int):
+        """
+        Find the next best move using Greedy Best-First Search.
+        Returns the next grid position (x, y).
+        """
+        # Priority queue for Greedy Best-First Search
+        # Format: (priority, (x, y))
+        pq = [(0, (self.grid_x, self.grid_y))]
+        visited = set()
+        
+        # Keep track of where we came from to reconstruct the path
+        came_from = {}
+        
+        while pq:
+            _, current = heapq.heappop(pq)
+            
+            if current in visited:
+                continue
+                
+            visited.add(current)
+            
+            # If we found Pacman's position, reconstruct the path
+            if current == (pacman_x, pacman_y):
+                break
+                
+            # Check all valid neighbors
+            for next_pos in self.get_valid_neighbors(current[0], current[1], maze):
+                if next_pos not in visited:
+                    # Calculate priority using Manhattan distance
+                    priority = self.manhattan_distance(next_pos[0], next_pos[1], 
+                                                    pacman_x, pacman_y)
+                    heapq.heappush(pq, (priority, next_pos))
+                    came_from[next_pos] = current
+
+        # If we can't find a path to Pacman, return current position
+        if not came_from:
+            return (self.grid_x, self.grid_y)
+
+        # Reconstruct the path
+        current = (pacman_x, pacman_y)
+        path = []
+        
+        while current in came_from:
+            path.append(current)
+            current = came_from[current]
+            
+        # Return the next position in the path
+        # If path is empty, stay in current position
+        if path:
+            return path[-1]  # The next step towards Pacman
+        return (self.grid_x, self.grid_y)
+
+    def update(self, maze, pacman_x: int, pacman_y: int):
+        """Update ghost position using Greedy Best-First Search."""
+        # Convert Pacman's pixel coordinates to grid coordinates
+        target_grid_x = pacman_x // CELL_SIZE
+        target_grid_y = pacman_y // CELL_SIZE
+        
+        # Find next move
+        next_x, next_y = self.find_next_move(maze, target_grid_x, target_grid_y)
+        
+        # Calculate direction to move
+        dx = next_x - self.grid_x
+        dy = next_y - self.grid_y
+        
+        # Update position based on direction
+        if dx > 1:  # Wrap around left
+            self.x -= self.speed
+        elif dx < -1:  # Wrap around right
+            self.x += self.speed
+        else:
+            self.x += dx * self.speed
+            
+        self.y += dy * self.speed
+        
+        # Handle tunnel wrap-around
+        if self.x < 0:
+            self.x = SCREEN_WIDTH - CELL_SIZE
+        elif self.x >= SCREEN_WIDTH:
+            self.x = 0
+
+        # Update grid position
+        self.grid_x = self.x // CELL_SIZE
+        self.grid_y = self.y // CELL_SIZE
     
-    def can_move(self, dx, dy):
+    def draw(self):
+        center_x = self.x + CELL_SIZE//2
+        center_y = self.y + CELL_SIZE//2
+        
+        # Draw ghost body
+        pygame.draw.circle(screen, self.color, (int(center_x), int(center_y)), self.radius)
+        # Draw rectangle bottom
+        pygame.draw.rect(screen, self.color, 
+                        (center_x - self.radius, center_y, 
+                         self.radius * 2, self.radius))
+
+        """def can_move(self, dx, dy):
     # Convert direction to number (0=right, 1=left, 2=up, 3=down)
         if dx > 0: direction = 0
         elif dx < 0: direction = 1
@@ -199,7 +314,6 @@ class Ghost:
         else: direction = 3
     
         return not check_wall_collision(self.x, self.y, direction, self.speed, CELL_SIZE)
-
     def move(self, pacman):
         # Simple ghost AI - try to move toward Pac-Man while respecting walls
         possible_directions = []
@@ -245,27 +359,8 @@ class Ghost:
             self.y -= self.speed
         elif self.direction == 3 and self.can_move(0, 1):  # Down
             self.y += self.speed
-
-        # Handle tunnel
-        if self.x < 0:
-            self.x = SCREEN_WIDTH - CELL_SIZE
-        elif self.x >= SCREEN_WIDTH:
-            self.x = 0
-
-        # Update grid position
-        self.grid_x = self.x // CELL_SIZE
-        self.grid_y = self.y // CELL_SIZE
-    
-    def draw(self):
-        center_x = self.x + CELL_SIZE//2
-        center_y = self.y + CELL_SIZE//2
-        
-        # Draw ghost body
-        pygame.draw.circle(screen, self.color, (int(center_x), int(center_y)), self.radius)
-        # Draw rectangle bottom
-        pygame.draw.rect(screen, self.color, 
-                        (center_x - self.radius, center_y, 
-                         self.radius * 2, self.radius))
+            
+        """
 
 def draw_maze():
     for y in range(MAZE_HEIGHT):
@@ -436,8 +531,9 @@ def main():
             
             # Move ghosts
             for ghost in ghosts:
-                ghost.move(pacman)
-                # Check collision with ghosts
+                # ghost.move(pacman)
+                ghost.update(MAZE_LAYOUT, pacman.x, pacman.y)
+                # Check collision with ghostsJ
                 # if check_collision(pacman.x + CELL_SIZE//2, pacman.y + CELL_SIZE//2, 
                 #                  ghost.x + CELL_SIZE//2, ghost.y + CELL_SIZE//2):
                 #     game_over = True
