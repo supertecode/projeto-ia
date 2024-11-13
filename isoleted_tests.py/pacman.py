@@ -75,7 +75,8 @@ MAZE_LAYOUT_2 = [
     [1,1,1,1,2,1,0,0,0,1,0,0,0,1,2,1,1,1,1],
     [1,1,1,1,2,1,0,1,1,0,1,1,0,1,2,1,1,1,1],
     [1,1,1,1,2,1,0,1,3,0,3,1,0,1,2,1,1,1,1],
-    [0,0,0,0,2,0,0,0,0,0,0,0,0,0,2,0,0,0,0],
+    [1,1,1,1,2,1,0,0,0,0,0,0,0,1,2,1,1,1,1],
+    [0,0,0,0,2,0,0,1,0,0,0,1,0,0,2,0,0,0,0],
     [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
     [1,1,1,1,2,1,0,1,2,2,2,1,0,1,2,1,1,1,1],
     [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
@@ -84,8 +85,11 @@ MAZE_LAYOUT_2 = [
     [1,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,1],
     [1,2,2,2,2,1,1,1,1,1,1,1,1,1,2,2,2,2,1],
     [1,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ]
+
 
 MAZE_LAYOUT_3 = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -94,8 +98,8 @@ MAZE_LAYOUT_3 = [
     [1,3,1,1,1,1,2,1,3,1,3,1,2,1,1,1,1,3,1],
     [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
     [1,1,1,1,2,1,1,1,1,1,1,1,1,1,2,1,1,1,1],
-    [1,1,1,1,2,1,0,0,0,1,0,0,0,1,2,1,1,1,1],
-    [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
+    [1,1,1,1,2,1,0,0,0,0,0,0,0,1,2,1,1,1,1],
+    [1,1,1,1,2,1,0,1,1,0,1,1,0,1,2,1,1,1,1],
     [1,1,1,1,2,1,0,1,0,0,0,1,0,1,2,1,1,1,1],
     [1,1,1,1,2,1,0,1,0,1,0,1,0,1,2,1,1,1,1],
     [0,0,0,0,2,0,0,1,0,0,0,1,0,0,2,0,0,0,0],
@@ -106,8 +110,12 @@ MAZE_LAYOUT_3 = [
     [1,2,1,1,1,1,1,1,2,1,2,1,1,1,1,1,1,2,1],
     [1,2,1,1,1,1,1,1,2,1,2,1,1,1,1,1,1,2,1],
     [1,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,1],
+    [1,2,2,2,2,2,2,1,1,1,1,1,2,2,2,2,2,2,1],
+    [1,2,2,2,2,2,2,1,1,1,1,1,2,2,2,2,2,2,1],
+    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ]
+
 
 
 class PacMan:
@@ -365,10 +373,11 @@ class Ghost:
                         (center_x - self.radius, center_y, 
                          self.radius * 2, self.radius))
 
-def draw_maze():
+def draw_maze(MAZE):
     for y in range(MAZE_HEIGHT):
         for x in range(MAZE_WIDTH):
-            cell = MAZE_LAYOUT[y][x]
+            # print(MAZE[y][x])
+            cell = MAZE[y][x]
             rect = pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, WALL_SIZE, WALL_SIZE)
             
             if cell == 1:  # Wall
@@ -560,6 +569,14 @@ def main():
     score = 0
     game_over = False
     running = True
+    level_selected = MAZE_LAYOUT
+    
+    if(level_var.get() == 1):
+        level_selected = MAZE_LAYOUT
+    elif(level_var.get() == 2):
+        level_selected = MAZE_LAYOUT_2
+    elif(level_var.get() == 3):
+        level_selected = MAZE_LAYOUT_3
     
     while running:
         # Event handling
@@ -579,8 +596,8 @@ def main():
                     # Reset maze dots TODO CORRIGIR PRA RESETAR CORRETAMENTE, ELE DEIXA ATE ONDE ER AP SER ESPÇO EM BRANCO COM PONTOS
                     for y in range(MAZE_HEIGHT):
                         for x in range(MAZE_WIDTH):
-                            if MAZE_LAYOUT[y][x] == 0:
-                                MAZE_LAYOUT[y][x] = 2
+                            if level_selected[y][x] == 0:
+                                level_selected[y][x] = 2
                     score = 0
                     game_over = False
         
@@ -589,17 +606,17 @@ def main():
             pacman.move()
             
             # Check for dot collection
-            if MAZE_LAYOUT[pacman.grid_y][pacman.grid_x] == 2:  # Regular dot
-                MAZE_LAYOUT[pacman.grid_y][pacman.grid_x] = 0
+            if level_selected[pacman.grid_y][pacman.grid_x] == 2:  # Regular dot
+                level_selected[pacman.grid_y][pacman.grid_x] = 0
                 score += 10
-            elif MAZE_LAYOUT[pacman.grid_y][pacman.grid_x] == 3:  # Power pellet
-                MAZE_LAYOUT[pacman.grid_y][pacman.grid_x] = 0
+            elif level_selected[pacman.grid_y][pacman.grid_x] == 3:  # Power pellet
+                level_selected[pacman.grid_y][pacman.grid_x] = 0
                 score += 50
             
             # Move ghosts
             for ghost in ghosts:
                 # ghost.move(pacman)
-                ghost.update(MAZE_LAYOUT, pacman.x, pacman.y)
+                ghost.update(level_selected, pacman.x, pacman.y)
                 # Check collision with ghostsJ
                 # if check_collision(pacman.x + CELL_SIZE//2, pacman.y + CELL_SIZE//2, 
                 #                  ghost.x + CELL_SIZE//2, ghost.y + CELL_SIZE//2):
@@ -613,7 +630,7 @@ def main():
             dots_remaining = False
             for y in range(MAZE_HEIGHT):
                 for x in range(MAZE_WIDTH):
-                    if MAZE_LAYOUT[y][x] in [2, 3]:
+                    if level_selected[y][x] in [2, 3]:
                         dots_remaining = True
                         break
                 if dots_remaining:
@@ -626,7 +643,7 @@ def main():
         screen.fill(BLACK)
         
         # Draw maze
-        draw_maze()
+        draw_maze(level_selected)
         
         # Draw Pac-Man and ghosts
         pacman.draw()
@@ -640,7 +657,7 @@ def main():
         
         if game_over:
             # Check if player won
-            won = not any(MAZE_LAYOUT[y][x] in [2, 3] for y in range(MAZE_HEIGHT) for x in range(MAZE_WIDTH))
+            won = not any(level_selected[y][x] in [2, 3] for y in range(MAZE_HEIGHT) for x in range(MAZE_WIDTH))
             message = 'You Win!' if won else 'Game Over!'
             game_over_text = font.render(f'{message} Press SPACE to restart', True, WHITE)
             text_rect = game_over_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
