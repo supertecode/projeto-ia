@@ -14,7 +14,7 @@ CELL_SIZE = 30
 WALL_SIZE = CELL_SIZE
 # Define maze dimensions
 MAZE_WIDTH = 19
-MAZE_HEIGHT = 21
+MAZE_HEIGHT = 22
 # Calculate screen dimensions based on maze size
 SCREEN_WIDTH = MAZE_WIDTH * CELL_SIZE
 SCREEN_HEIGHT = MAZE_HEIGHT * CELL_SIZE
@@ -60,6 +60,56 @@ MAZE_LAYOUT = [
     [1,1,2,1,2,1,2,1,1,1,1,1,2,1,2,1,2,1,1],
     [1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
     [1,2,1,1,1,1,1,1,2,1,2,1,1,1,1,1,1,2,1],
+    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+]
+
+MAZE_LAYOUT_2 = [
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,2,2,2,2,2,2,1,1,1,1,1,2,2,2,2,2,2,1],
+    [1,2,1,1,2,1,2,1,2,2,2,1,2,1,2,1,1,2,1],
+    [1,2,1,1,2,1,2,1,3,1,3,1,2,1,2,1,1,2,1],
+    [1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
+    [1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,1,1,1],
+    [1,1,1,1,2,1,0,0,0,1,0,0,0,1,2,1,1,1,1],
+    [1,1,1,1,2,1,0,1,1,0,1,1,0,1,2,1,1,1,1],
+    [1,1,1,1,2,1,0,1,3,0,3,1,0,1,2,1,1,1,1],
+    [1,1,1,1,2,1,0,0,0,0,0,0,0,1,2,1,1,1,1],
+    [0,0,0,0,2,0,0,1,0,0,0,1,0,0,2,0,0,0,0],
+    [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
+    [1,1,1,1,2,1,0,1,2,2,2,1,0,1,2,1,1,1,1],
+    [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
+    [1,2,2,2,2,2,2,1,1,1,1,1,2,2,2,2,2,2,1],
+    [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
+    [1,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,1],
+    [1,2,2,2,2,1,1,1,1,1,1,1,1,1,2,2,2,2,1],
+    [1,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+]
+
+MAZE_LAYOUT_3 = [
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1],
+    [1,2,1,1,1,1,2,1,2,1,2,1,2,1,1,1,1,2,1],
+    [1,3,1,1,1,1,2,1,3,1,3,1,2,1,1,1,1,3,1],
+    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+    [1,1,1,1,2,1,1,1,1,1,1,1,1,1,2,1,1,1,1],
+    [1,1,1,1,2,1,0,0,0,0,0,0,0,1,2,1,1,1,1],
+    [1,1,1,1,2,1,0,1,1,0,1,1,0,1,2,1,1,1,1],
+    [1,1,1,1,2,1,0,1,0,0,0,1,0,1,2,1,1,1,1],
+    [1,1,1,1,2,1,0,1,0,1,0,1,0,1,2,1,1,1,1],
+    [0,0,0,0,2,0,0,1,0,0,0,1,0,0,2,0,0,0,0],
+    [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
+    [1,2,2,2,2,1,0,0,0,0,0,0,0,1,2,2,2,2,1],
+    [1,2,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,2,1],
+    [1,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1],
+    [1,2,1,1,1,1,1,1,2,1,2,1,1,1,1,1,1,2,1],
+    [1,2,1,1,1,1,1,1,2,1,2,1,1,1,1,1,1,2,1],
+    [1,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,1],
+    [1,2,2,2,2,2,2,1,1,1,1,1,2,2,2,2,2,2,1],
+    [1,2,2,2,2,2,2,1,1,1,1,1,2,2,2,2,2,2,1],
     [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ]
@@ -259,12 +309,11 @@ class Ghost:
                          self.radius * 2, self.radius))
          
 
-
-
-def draw_maze():
+def draw_maze(MAZE):
     for y in range(MAZE_HEIGHT):
         for x in range(MAZE_WIDTH):
-            cell = MAZE_LAYOUT[y][x]
+            # print(MAZE[y][x])
+            cell = MAZE[y][x]
             rect = pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, WALL_SIZE, WALL_SIZE)
             
             if cell == 1:  # Wall
@@ -311,8 +360,8 @@ def check_wall_collision(x, y, direction, speed, cell_size):
         bottom_cell_y = (bottom - tolerance) // cell_size
         
         for cell_y in range(top_cell_y, bottom_cell_y + 1):
-            if cell_y >= 0 and cell_y < len(MAZE_LAYOUT) and cell_x < len(MAZE_LAYOUT[0]):
-                if MAZE_LAYOUT[cell_y][cell_x] == 1:
+            if cell_y >= 0 and cell_y < len(level_selected) and cell_x < len(level_selected[0]):
+                if level_selected[cell_y][cell_x] == 1:
                     return True
                     
     elif direction == 1:  # Left
@@ -323,8 +372,8 @@ def check_wall_collision(x, y, direction, speed, cell_size):
         bottom_cell_y = (bottom - tolerance) // cell_size
         
         for cell_y in range(top_cell_y, bottom_cell_y + 1):
-            if cell_y >= 0 and cell_y < len(MAZE_LAYOUT) and cell_x >= 0:
-                if MAZE_LAYOUT[cell_y][cell_x] == 1:
+            if cell_y >= 0 and cell_y < len(level_selected) and cell_x >= 0:
+                if level_selected[cell_y][cell_x] == 1:
                     return True
                     
     elif direction == 2:  # Up
@@ -335,8 +384,8 @@ def check_wall_collision(x, y, direction, speed, cell_size):
         right_cell_x = (right - tolerance) // cell_size
         
         for cell_x in range(left_cell_x, right_cell_x + 1):
-            if cell_y >= 0 and cell_x >= 0 and cell_x < len(MAZE_LAYOUT[0]):
-                if MAZE_LAYOUT[cell_y][cell_x] == 1:
+            if cell_y >= 0 and cell_x >= 0 and cell_x < len(level_selected[0]):
+                if level_selected[cell_y][cell_x] == 1:
                     return True
                     
     else:  # Down
@@ -347,8 +396,8 @@ def check_wall_collision(x, y, direction, speed, cell_size):
         right_cell_x = (right - tolerance) // cell_size
         
         for cell_x in range(left_cell_x, right_cell_x + 1):
-            if cell_y < len(MAZE_LAYOUT) and cell_x >= 0 and cell_x < len(MAZE_LAYOUT[0]):
-                if MAZE_LAYOUT[cell_y][cell_x] == 1:
+            if cell_y < len(level_selected) and cell_x >= 0 and cell_x < len(level_selected[0]):
+                if level_selected[cell_y][cell_x] == 1:
                     return True
     
     return False
@@ -441,6 +490,15 @@ if level_var.get() == 0:
     quit()
     exit()
 
+level_selected = MAZE_LAYOUT
+
+if(level_var.get() == 1):
+    level_selected = MAZE_LAYOUT
+elif(level_var.get() == 2):
+    level_selected = MAZE_LAYOUT_2
+elif(level_var.get() == 3):
+    level_selected = MAZE_LAYOUT_3
+
 def main():
     # Create game objects
     # Place Pac-Man in a valid starting position
@@ -457,6 +515,7 @@ def main():
     score = 0
     game_over = False
     running = True
+    
     
     while running:
         # Event handling
@@ -476,8 +535,8 @@ def main():
                     # Reset maze dots
                     for y in range(MAZE_HEIGHT):
                         for x in range(MAZE_WIDTH):
-                            if MAZE_LAYOUT[y][x] == 0:
-                                MAZE_LAYOUT[y][x] = 2
+                            if level_selected[y][x] == 0:
+                                level_selected[y][x] = 2
                     score = 0
                     game_over = False
         
@@ -486,17 +545,17 @@ def main():
             pacman.move()
             
             # Check for dot collection
-            if MAZE_LAYOUT[pacman.grid_y][pacman.grid_x] == 2:  # Regular dot
-                MAZE_LAYOUT[pacman.grid_y][pacman.grid_x] = 0
+            if level_selected[pacman.grid_y][pacman.grid_x] == 2:  # Regular dot
+                level_selected[pacman.grid_y][pacman.grid_x] = 0
                 score += 10
-            elif MAZE_LAYOUT[pacman.grid_y][pacman.grid_x] == 3:  # Power pellet
-                MAZE_LAYOUT[pacman.grid_y][pacman.grid_x] = 0
+            elif level_selected[pacman.grid_y][pacman.grid_x] == 3:  # Power pellet
+                level_selected[pacman.grid_y][pacman.grid_x] = 0
                 score += 50
             
             # Move ghosts
             for ghost in ghosts:
                 ghost.move(pacman)
-                # ghost.update(MAZE_LAYOUT, pacman.x, pacman.y)
+                # ghost.update(level_selected, pacman.x, pacman.y)
                 # Check collision with ghostsJ
                 # if check_collision(pacman.x + CELL_SIZE//2, pacman.y + CELL_SIZE//2, 
                 #                  ghost.x + CELL_SIZE//2, ghost.y + CELL_SIZE//2):
@@ -510,7 +569,7 @@ def main():
             dots_remaining = False
             for y in range(MAZE_HEIGHT):
                 for x in range(MAZE_WIDTH):
-                    if MAZE_LAYOUT[y][x] in [2, 3]:
+                    if level_selected[y][x] in [2, 3]:
                         dots_remaining = True
                         break
                 if dots_remaining:
@@ -523,7 +582,7 @@ def main():
         screen.fill(BLACK)
         
         # Draw maze
-        draw_maze()
+        draw_maze(level_selected)
         
         # Draw Pac-Man and ghosts
         pacman.draw()
@@ -537,7 +596,7 @@ def main():
         
         if game_over:
             # Check if player won
-            won = not any(MAZE_LAYOUT[y][x] in [2, 3] for y in range(MAZE_HEIGHT) for x in range(MAZE_WIDTH))
+            won = not any(level_selected[y][x] in [2, 3] for y in range(MAZE_HEIGHT) for x in range(MAZE_WIDTH))
             message = 'You Win!' if won else 'Game Over!'
             game_over_text = font.render(f'{message} Press SPACE to restart', True, WHITE)
             text_rect = game_over_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))

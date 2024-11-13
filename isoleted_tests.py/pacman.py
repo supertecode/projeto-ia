@@ -138,7 +138,7 @@ class PacMan:
         elif dy < 0: direction = 2
         else: direction = 3
     
-        return not check_wall_collision(self.x, self.y, direction, self.speed, CELL_SIZE)
+        return not check_wall_collision(self.x, self.y, direction, self.speed, CELL_SIZE, level_selected)
 
     def move(self):
         keys = pygame.key.get_pressed()
@@ -230,7 +230,6 @@ class PacMan:
                 (center_x + math.cos(end_angle) * self.radius,
                  center_y - math.sin(end_angle) * self.radius)
             ])
-
 
 class Ghost:
     def __init__(self, x, y, color):
@@ -396,7 +395,7 @@ def draw_maze(MAZE):
 # def check_collision(x1, y1, x2, y2, tolerance=CELL_SIZE-10):
 #     distance = math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 #     return distance < tolerance
-def check_wall_collision(x, y, direction, speed, cell_size):
+def check_wall_collision(x, y, direction, speed, cell_size, level_selected):
     """
     Check if moving in the given direction would result in a wall collision.
     Returns True if there's a collision, False otherwise.
@@ -424,8 +423,8 @@ def check_wall_collision(x, y, direction, speed, cell_size):
         bottom_cell_y = (bottom - tolerance) // cell_size
         
         for cell_y in range(top_cell_y, bottom_cell_y + 1):
-            if cell_y >= 0 and cell_y < len(MAZE_LAYOUT) and cell_x < len(MAZE_LAYOUT[0]):
-                if MAZE_LAYOUT[cell_y][cell_x] == 1:
+            if cell_y >= 0 and cell_y < len(level_selected) and cell_x < len(level_selected[0]):
+                if level_selected[cell_y][cell_x] == 1:
                     return True
                     
     elif direction == 1:  # Left
@@ -436,8 +435,8 @@ def check_wall_collision(x, y, direction, speed, cell_size):
         bottom_cell_y = (bottom - tolerance) // cell_size
         
         for cell_y in range(top_cell_y, bottom_cell_y + 1):
-            if cell_y >= 0 and cell_y < len(MAZE_LAYOUT) and cell_x >= 0:
-                if MAZE_LAYOUT[cell_y][cell_x] == 1:
+            if cell_y >= 0 and cell_y < len(level_selected) and cell_x >= 0:
+                if level_selected[cell_y][cell_x] == 1:
                     return True
                     
     elif direction == 2:  # Up
@@ -448,8 +447,8 @@ def check_wall_collision(x, y, direction, speed, cell_size):
         right_cell_x = (right - tolerance) // cell_size
         
         for cell_x in range(left_cell_x, right_cell_x + 1):
-            if cell_y >= 0 and cell_x >= 0 and cell_x < len(MAZE_LAYOUT[0]):
-                if MAZE_LAYOUT[cell_y][cell_x] == 1:
+            if cell_y >= 0 and cell_x >= 0 and cell_x < len(level_selected[0]):
+                if level_selected[cell_y][cell_x] == 1:
                     return True
                     
     else:  # Down
@@ -460,8 +459,8 @@ def check_wall_collision(x, y, direction, speed, cell_size):
         right_cell_x = (right - tolerance) // cell_size
         
         for cell_x in range(left_cell_x, right_cell_x + 1):
-            if cell_y < len(MAZE_LAYOUT) and cell_x >= 0 and cell_x < len(MAZE_LAYOUT[0]):
-                if MAZE_LAYOUT[cell_y][cell_x] == 1:
+            if cell_y < len(level_selected) and cell_x >= 0 and cell_x < len(level_selected[0]):
+                if level_selected[cell_y][cell_x] == 1:
                     return True
     
     return False
@@ -552,6 +551,15 @@ print(f"Selected level: {level_var.get()}")
 if level_var.get() == 0:
     quit()
     exit()
+    
+level_selected = MAZE_LAYOUT
+    
+if(level_var.get() == 1):
+    level_selected = MAZE_LAYOUT
+elif(level_var.get() == 2):
+    level_selected = MAZE_LAYOUT_2
+elif(level_var.get() == 3):
+    level_selected = MAZE_LAYOUT_3
 
 def main():
     # Create game objects
@@ -569,14 +577,7 @@ def main():
     score = 0
     game_over = False
     running = True
-    level_selected = MAZE_LAYOUT
-    
-    if(level_var.get() == 1):
-        level_selected = MAZE_LAYOUT
-    elif(level_var.get() == 2):
-        level_selected = MAZE_LAYOUT_2
-    elif(level_var.get() == 3):
-        level_selected = MAZE_LAYOUT_3
+
     
     while running:
         # Event handling
