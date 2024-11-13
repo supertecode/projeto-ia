@@ -3,6 +3,8 @@ import random
 import heapq
 from typing import List, Tuple, Set
 import math
+import tkinter as tk
+from tkinter import font
 
 # Initialize Pygame
 pygame.init()
@@ -255,9 +257,9 @@ class Ghost:
         pygame.draw.rect(screen, self.color, 
                         (center_x - self.radius, center_y, 
                          self.radius * 2, self.radius))
-        
-            
-        
+         
+
+
 
 def draw_maze():
     for y in range(MAZE_HEIGHT):
@@ -373,6 +375,71 @@ def check_entity_collision(x1, y1, x2, y2, cell_size):
     # Collision occurs if distance is less than 3/4 of a cell size
     collision_threshold = cell_size * 0.75
     return distance < collision_threshold
+
+def center_window(window, width, height):
+    # Get screen width and height
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+    
+    # Calculate position coordinates
+    x = (screen_width/2) - (width/2)
+    y = (screen_height/2) - (height/2)
+    
+    # Set the window position
+    window.geometry('%dx%d+%d+%d' % (width, height, x, y))
+
+# Function to handle button clicks
+def set_level(level):
+    global level_var
+    level_var.set(level)
+    root.destroy()
+
+# Create the main window
+root = tk.Tk()
+root.title("Pac-man")
+
+# Set window properties
+window_width = 300
+window_height = 400
+center_window(root, window_width, window_height)  # Center the window
+root.configure(bg="#000000")  # Set background color to black
+
+# Optional: Prevent window resizing
+root.resizable(False, False)
+
+# Set custom font
+custom_font = font.Font(family="Helvetica", size=16, weight="bold")
+title_font = font.Font(family="Helvetica", size=20, weight="bold")
+select_level = font.Font(family="Helvetica", size=18, weight="bold")
+
+# Create a variable to store the selected level
+level_var = tk.IntVar()
+
+# Create the title
+title_label = tk.Label(root, text="Pac-man", font=title_font, fg="#ffff00", bg="#000000")
+title_label.pack(pady=20)
+select_lebel = tk.Label(root, text="Selecione a fase", font=select_level, fg="#ffff00", bg="#000000" )
+select_lebel.pack(pady = 18)
+
+# Create the buttons
+button_frame = tk.Frame(root, bg="#000000")
+button_frame.pack(pady=20)
+
+tk.Button(button_frame, text="1", command=lambda: set_level(1), font=custom_font, fg="#ffff00", bg="#000000", relief=tk.FLAT, padx=20, pady=10).grid(row=0, column=0, padx=10)
+tk.Button(button_frame, text="2", command=lambda: set_level(2), font=custom_font, fg="#ffff00", bg="#000000", relief=tk.FLAT, padx=20, pady=10).grid(row=0, column=1, padx=10)
+tk.Button(button_frame, text="3", command=lambda: set_level(3), font=custom_font, fg="#ffff00", bg="#000000", relief=tk.FLAT, padx=20, pady=10).grid(row=0, column=2, padx=10)
+tk.Button(button_frame, text="Quit", command=root.destroy, font=custom_font, fg="#ffff00", bg="#000000", relief=tk.FLAT, padx=20, pady=10).grid(row=1, column=1, padx=10, pady=10)
+
+# Run the main loop
+root.mainloop()
+
+# Print the selected level
+print(f"Selected level: {level_var.get()}")
+print(level_var.get() == 0)
+
+if level_var.get() == 0:
+    quit()
+    exit()
 
 def main():
     # Create game objects
