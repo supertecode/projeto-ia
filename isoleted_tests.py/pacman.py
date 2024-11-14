@@ -117,7 +117,6 @@ MAZE_LAYOUT_3 = [
 ]
 
 
-
 class PacMan:
     def __init__(self, x, y):
         self.x = x
@@ -181,7 +180,7 @@ class PacMan:
         elif self.direction == 3 and self.can_move(0, 1):  # Down
             self.y += self.speed
 
-        # Túnel da esquerda e direita
+        # Tunnel
         if self.x < 0:
             self.x = SCREEN_WIDTH - CELL_SIZE
         elif self.x >= SCREEN_WIDTH:
@@ -193,7 +192,7 @@ class PacMan:
         self.grid_x = center_x // CELL_SIZE
         self.grid_y = center_y // CELL_SIZE
         
-        print('POSIÇÃO DO PACMAN: ',self.grid_x, self.grid_y)
+        # print('PACMAN POSITION: ',self.grid_x, self.grid_y)
             
         # Animation
         self.animation_counter += 1
@@ -243,11 +242,10 @@ class Ghost:
         self.radius = CELL_SIZE // 2 - 2
 
     def manhattan_distance(self, x1: int, y1: int, x2: int, y2: int) -> int:
-        """Calculate Manhattan distance between two points."""
         return abs(x1 - x2) + abs(y1 - y2)
 
     def get_valid_neighbors(self, x: int, y: int, maze):
-        """Get valid neighboring cells (not walls)."""
+        # Get valid neighbors cells, excludind walls
         directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]  # up, down, left, right
         neighbors = []
         
@@ -255,34 +253,24 @@ class Ghost:
             new_x = x + dx
             new_y = y + dy
             
-            # Handle tunnel wrap-around
+            # Tunnel
             if new_x < 0:
                 new_x = len(maze[0]) - 1
             elif new_x >= len(maze[0]):
                 new_x = 0
-
-            # checkCollision = check_wall_collision(self.x, self.y, self.direction, self.speed, CELL_SIZE)
-            # Check if the position is valid and not a wall
-            # if(checkCollision):
-            #     print('COLISAO')
-            # else:
-            #     print('SEMCOLISAO')
-            #     neighbors.append((new_x, new_y))
                 
-            if (maze[new_y][new_x] != 1):  # Assuming 1 represents walls
+            if (maze[new_y][new_x] != 1):  # 1 represents a wall
                 neighbors.append((new_x, new_y))
                 print(neighbors)
                 
         return neighbors
 
     def find_next_move(self, maze, pacman_x: int, pacman_y: int):
-        """
-        Find the next best move using Greedy Best-First Search.
-        Returns the next grid position (x, y).
-        """
-        # Priority queue for Greedy Best-First Search
-        # Format: (priority, (x, y))
-        pq = [(0, (self.grid_x, self.grid_y))]
+
+        # Find the next best move using Greedy Best-First Search.
+        # Returns the next grid position (x, y).
+
+        pq = [(0, (self.grid_x, self.grid_y))] # Priority queue
         visited = set()
         
         # Keep track of where we came from to reconstruct the path
@@ -328,7 +316,7 @@ class Ghost:
         return (self.grid_x, self.grid_y)
 
     def update(self, maze, pacman_x: int, pacman_y: int):
-        """Update ghost position using Greedy Best-First Search."""
+        # Update ghost position using Greedy Best-First Search.
         # Convert Pacman's pixel coordinates to grid coordinates
         target_grid_x = pacman_x // CELL_SIZE
         target_grid_y = pacman_y // CELL_SIZE
@@ -341,16 +329,16 @@ class Ghost:
         dy = next_y - self.grid_y
         
         # Update position based on direction
-        if dx > 1:  # Wrap around left
+        if dx > 1:  #  left
             self.x -= self.speed
-        elif dx < -1:  # Wrap around right
+        elif dx < -1:  # right
             self.x += self.speed
         else:
             self.x += dx * self.speed
             
         self.y += dy * self.speed
         
-        # Handle tunnel wrap-around
+        # tunnel 
         if self.x < 0:
             self.x = SCREEN_WIDTH - CELL_SIZE
         elif self.x >= SCREEN_WIDTH:
@@ -375,7 +363,6 @@ class Ghost:
 def draw_maze(MAZE):
     for y in range(MAZE_HEIGHT):
         for x in range(MAZE_WIDTH):
-            # print(MAZE[y][x])
             cell = MAZE[y][x]
             rect = pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, WALL_SIZE, WALL_SIZE)
             
@@ -392,20 +379,12 @@ def draw_maze(MAZE):
                                   y * CELL_SIZE + CELL_SIZE//2),
                                  DOT_SIZE * 2)
 
-# def check_collision(x1, y1, x2, y2, tolerance=CELL_SIZE-10):
-#     distance = math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
-#     return distance < tolerance
+
 def check_wall_collision(x, y, direction, speed, cell_size, level_selected):
-    """
-    Check if moving in the given direction would result in a wall collision.
-    Returns True if there's a collision, False otherwise.
-    
-    Args:
-        x, y: Current position in pixels
-        direction: 0=right, 1=left, 2=up, 3=down
-        speed: Movement speed in pixels
-        cell_size: Size of each maze cell in pixels
-    """
+
+    # Check if moving in the given direction would result in a wall collision.
+    # Returns True if there's a collision, False otherwise.
+
     # Calculate the corners of the entity (Pac-Man or ghost)
     left = x
     right = x + cell_size - 1
@@ -415,7 +394,7 @@ def check_wall_collision(x, y, direction, speed, cell_size, level_selected):
     # Add some tolerance to make movement smoother
     tolerance = 5
     
-    if direction == 0:  # Right
+    if direction == 0: 
         # Check right side
         next_x = right + speed
         cell_x = next_x // cell_size
@@ -427,7 +406,7 @@ def check_wall_collision(x, y, direction, speed, cell_size, level_selected):
                 if level_selected[cell_y][cell_x] == 1:
                     return True
                     
-    elif direction == 1:  # Left
+    elif direction == 1: 
         # Check left side
         next_x = left - speed
         cell_x = next_x // cell_size
@@ -439,7 +418,7 @@ def check_wall_collision(x, y, direction, speed, cell_size, level_selected):
                 if level_selected[cell_y][cell_x] == 1:
                     return True
                     
-    elif direction == 2:  # Up
+    elif direction == 2:
         # Check top side
         next_y = top - speed
         cell_y = next_y // cell_size
@@ -451,7 +430,7 @@ def check_wall_collision(x, y, direction, speed, cell_size, level_selected):
                 if level_selected[cell_y][cell_x] == 1:
                     return True
                     
-    else:  # Down
+    else:
         # Check bottom side
         next_y = bottom + speed
         cell_y = next_y // cell_size
@@ -466,15 +445,9 @@ def check_wall_collision(x, y, direction, speed, cell_size, level_selected):
     return False
 
 def check_entity_collision(x1, y1, x2, y2, cell_size):
-    """
-    Check for collision between two entities (Pac-Man and ghosts).
-    Returns True if there's a collision, False otherwise.
+    # Check for collision between two entities (Pac-Man and ghosts).
+    # Returns True if there's a collision, False if there is not.
     
-    Args:
-        x1, y1: Position of first entity in pixels
-        x2, y2: Position of second entity in pixels
-        cell_size: Size of each maze cell in pixels
-    """
     # Use center points for more accurate collision detection
     center1_x = x1 + cell_size // 2
     center1_y = y1 + cell_size // 2
@@ -552,7 +525,7 @@ if level_var.get() == 0:
     quit()
     exit()
     
-level_selected = MAZE_LAYOUT
+level_selected = MAZE_LAYOUT # Default level
     
 if(level_var.get() == 1):
     level_selected = MAZE_LAYOUT
@@ -563,15 +536,14 @@ elif(level_var.get() == 3):
 
 def main():
     # Create game objects
-    # Place Pac-Man in a valid starting position
-    pacman = PacMan(9 * CELL_SIZE, 15 * CELL_SIZE)
+    pacman = PacMan(9 * CELL_SIZE, 15 * CELL_SIZE) # Place Pacman in a valid starting position
     
     # Place ghosts in the center area
     ghosts = [
         Ghost(9 * CELL_SIZE, 8 * CELL_SIZE, RED),
-        # Ghost(8 * CELL_SIZE, 8 * CELL_SIZE, (255, 192, 203)),  # Pink
-        # Ghost(10 * CELL_SIZE, 8 * CELL_SIZE, (0, 255, 255)),   # Cyan
-        # Ghost(11 * CELL_SIZE, 8 * CELL_SIZE, (255, 165, 0))    # Orange
+        Ghost(8 * CELL_SIZE, 8 * CELL_SIZE, (255, 192, 203)),  # Pink
+        Ghost(10 * CELL_SIZE, 8 * CELL_SIZE, (0, 255, 255)),   # Cyan
+        Ghost(11 * CELL_SIZE, 8 * CELL_SIZE, (255, 165, 0))    # Orange
     ]
     
     score = 0
@@ -590,11 +562,11 @@ def main():
                     pacman = PacMan(9 * CELL_SIZE, 15 * CELL_SIZE)
                     ghosts = [
                         Ghost(9 * CELL_SIZE, 9 * CELL_SIZE, RED),
-                        # Ghost(8 * CELL_SIZE, 8 * CELL_SIZE, (255, 192, 203)),
-                        # Ghost(10 * CELL_SIZE, 8 * CELL_SIZE, (0, 255, 255)),
-                        # Ghost(11 * CELL_SIZE, 8 * CELL_SIZE, (255, 165, 0))
+                        Ghost(8 * CELL_SIZE, 8 * CELL_SIZE, (255, 192, 203)),
+                        Ghost(10 * CELL_SIZE, 8 * CELL_SIZE, (0, 255, 255)),
+                        Ghost(11 * CELL_SIZE, 8 * CELL_SIZE, (255, 165, 0))
                     ]
-                    # Reset maze dots TODO CORRIGIR PRA RESETAR CORRETAMENTE, ELE DEIXA ATE ONDE ER AP SER ESPÇO EM BRANCO COM PONTOS
+                    # Reset maze dots 
                     for y in range(MAZE_HEIGHT):
                         for x in range(MAZE_WIDTH):
                             if level_selected[y][x] == 0:
@@ -616,28 +588,23 @@ def main():
             
             # Move ghosts
             for ghost in ghosts:
-                # ghost.move(pacman)
                 ghost.update(level_selected, pacman.x, pacman.y)
-                # Check collision with ghostsJ
-                # if check_collision(pacman.x + CELL_SIZE//2, pacman.y + CELL_SIZE//2, 
-                #                  ghost.x + CELL_SIZE//2, ghost.y + CELL_SIZE//2):
-                #     game_over = True
-                if check_entity_collision(pacman.x, pacman.y, 
+                if check_entity_collision(pacman.x, pacman.y, # If Pacman collides with a ghost, the game ends
                          ghost.x, ghost.y, 
                          CELL_SIZE):
-                         game_over = True
+                         game_over = True 
             
             # Check win condition
-            dots_remaining = False
+            no_dots_remaining = False
             for y in range(MAZE_HEIGHT):
                 for x in range(MAZE_WIDTH):
                     if level_selected[y][x] in [2, 3]:
-                        dots_remaining = True
+                        no_dots_remaining = True
                         break
-                if dots_remaining:
+                if no_dots_remaining:
                     break
             
-            if not dots_remaining:
+            if not no_dots_remaining:
                 game_over = True
         
         # Drawing
