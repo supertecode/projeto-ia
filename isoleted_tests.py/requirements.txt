@@ -1,0 +1,6 @@
+pygame
+tkinter
+typing
+heapq
+math
+random

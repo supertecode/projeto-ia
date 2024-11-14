@@ -1,1 +1,0 @@
-Exemplo do funcionamento da leitura de teclas do teclado em tempo de execução.
