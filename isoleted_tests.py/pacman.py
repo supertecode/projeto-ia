@@ -245,7 +245,7 @@ class Ghost:
         return abs(x1 - x2) + abs(y1 - y2)
 
     def get_valid_neighbors(self, x: int, y: int, maze):
-        # Get valid neighbors cells, excludind walls
+        # Get valid neighbors cells, excluding walls
         directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]  # up, down, left, right
         neighbors = []
         
@@ -261,7 +261,7 @@ class Ghost:
                 
             if (maze[new_y][new_x] != 1):  # 1 represents a wall
                 neighbors.append((new_x, new_y))
-                print(neighbors)
+                # print(neighbors)
                 
         return neighbors
 
@@ -271,18 +271,18 @@ class Ghost:
         # Returns the next grid position (x, y).
 
         pq = [(0, (self.grid_x, self.grid_y))] # Priority queue
-        visited = set()
+        visited = set() # Keep track of visited cells
         
         # Keep track of where we came from to reconstruct the path
         came_from = {}
         
-        while pq:
-            _, current = heapq.heappop(pq)
+        while pq: # Process nodes in the priority queue.
+            _, current = heapq.heappop(pq)  # Get the position with the highest priority (lowest value).
             
-            if current in visited:
+            if current in visited: # Skip this position if it has already been visited. 
                 continue
                 
-            visited.add(current)
+            visited.add(current) # Mark this position as visited.
             
             # If we found Pacman's position, reconstruct the path
             if current == (pacman_x, pacman_y):
@@ -290,10 +290,11 @@ class Ghost:
                 
             # Check all valid neighbors
             for next_pos in self.get_valid_neighbors(current[0], current[1], maze):
-                if next_pos not in visited:
-                    # Calculate priority using Manhattan distance
+                if next_pos not in visited: # Process neighbors only if they have not been visited yet.
+
                     priority = self.manhattan_distance(next_pos[0], next_pos[1], 
-                                                    pacman_x, pacman_y)
+                                                    pacman_x, pacman_y) # Calculate priority using Manhattan distance
+                    
                     heapq.heappush(pq, (priority, next_pos))
                     came_from[next_pos] = current
 
@@ -344,7 +345,7 @@ class Ghost:
         elif self.x >= SCREEN_WIDTH:
             self.x = 0
 
-        print('POSIÇÃO DO FANTASMA: ',self.grid_x, self.grid_y)
+        # print('POSIÇÃO DO FANTASMA: ',self.grid_x, self.grid_y)
         # Update grid position
         self.grid_x = self.x // CELL_SIZE
         self.grid_y = self.y // CELL_SIZE
@@ -519,7 +520,7 @@ tk.Button(button_frame, text="Quit", command=root.destroy, font=custom_font, fg=
 root.mainloop()
 
 # Print the selected level
-print(f"Selected level: {level_var.get()}")
+# print(f"Selected level: {level_var.get()}")
 
 if level_var.get() == 0:
     quit()
